@@ -1,19 +1,42 @@
 const React = require("react");
 const ReactDOM = require("react-dom");
 
+const {createStore} = require('redux');
 
-let defaultTime = {timerTime: 10, pauseTime: 5};
+//let defaultTime = {workTime: 10, relaxTime: 5};
+
+const pomodoro = (state = {activity: 'work', timeLeft: 10, status: 'off', defaultTime: { workTime: 10, relaxTime: 5}}, action) => {
+  switch (action.type) {
+    case 'PAUSE':
+      if (state.status === 'off') {
+        return Object.assign({}, state, {status: 'on'});
+      }
+      return Object.assign({}, state, {status: 'off'});
+  }
+}
+
+module.exports = {
+    pomodoro
+};
+const store = createStore(pomodoro);
+
+// store.subscribe(() => console.log(store.getState()));
+
+// store.dispatch({type: 'PAUSE'});
+// store.dispatch({type: 'PAUSE'});
+// store.dispatch({type: 'PAUSE'});
+
 
 const TimerSettings = React.createClass({
   render: function() {
     return (
       <div>
         <button> + </button>
-        <span>Work Time {this.props.defaultTime.timerTime}</span>
+        <span>Work Time {this.props.defaultTime.workTime}</span>
         <button> - </button>
         <p></p>
         <button> + </button>
-        <span>Pause Time {this.props.defaultTime.pauseTime}</span>
+        <span>Relax Time {this.props.defaultTime.relaxTime}</span>
         <button> - </button>
       </div>
     );
@@ -23,23 +46,44 @@ const TimerSettings = React.createClass({
 const TimerDisplay = React.createClass({
   render: function() {
     return (
-      <div>{ this.props.defaultTime.timerTime }</div>
-    );
-  }
-});
-
-const Pomodoro = React.createClass({
-  render: function() {
-    return (
-      <div>
-        <TimerSettings defaultTime={this.props.defaultTime} />
-        <TimerDisplay defaultTime={this.props.defaultTime} />
+      <div
+      onClick={()=>{
+        store.dispatch({type:'PAUSE'})
+      }}>
+        { this.props.timeLeft }
       </div>
     );
   }
 });
 
-ReactDOM.render(
-  <Pomodoro defaultTime={defaultTime} />,
-  document.getElementById('root')
-);
+const Pomodoro = React.createClass({
+  getInitialState: function() {
+    return {
+      activity: 'work',
+      timeLeft: 10,
+      status: 'off',
+      defaultTime: {
+        workTime: 10,
+        relaxTime: 5
+      }
+    }
+  },
+  render: function() {
+    return (
+      <div>
+        <TimerSettings defaultTime={this.state.defaultTime} />
+        <TimerDisplay timeLeft={this.state.timeLeft} />
+      </div>
+    );
+  }
+});
+
+const render = () => {
+  ReactDOM.render(
+    <Pomodoro {...store.getState()} />,
+    document.getElementById('root')
+  );
+};
+
+store.subscribe(render);
+render();
