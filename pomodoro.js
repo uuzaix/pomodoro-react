@@ -26,7 +26,7 @@ const pomodoro = (state = {activity: 'work', timeLeft: 10, status: 'off', defaul
         return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime, relaxTime: state.defaultTime.relaxTime - 1}})
       }
       return state;
-      
+
     default:
       return state;
   }
@@ -36,7 +36,7 @@ module.exports = {
     pomodoro
 };
 
-const store = createStore(pomodoro);
+const store = createStore(pomodoro, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 // store.subscribe(() => console.log(store.getState()));
 
@@ -81,22 +81,11 @@ const TimerDisplay = ({timeLeft}) => (
 
 
 const Pomodoro = React.createClass({
-  getInitialState: function() {
-    return {
-      activity: 'work',
-      timeLeft: 10,
-      status: 'off',
-      defaultTime: {
-        workTime: 10,
-        relaxTime: 5
-      }
-    }
-  },
   render: function() {
     return (
       <div>
-        <TimerSettings defaultTime={this.state.defaultTime} />
-        <TimerDisplay timeLeft={this.state.timeLeft} />
+        <TimerSettings defaultTime={this.props.defaultTime} />
+        <TimerDisplay timeLeft={this.props.timeLeft} />
       </div>
     );
   }
