@@ -3,27 +3,34 @@ const ReactDOM = require("react-dom");
 
 const { createStore } = require('redux');
 
-//let defaultTime = {workTime: 10, relaxTime: 5};
+//let defaultTime = {workTime: 10, breakTime: 5};
 
-const pomodoro = (state = {activity: 'work', timeLeft: 10, status: 'off', defaultTime: { workTime: 10, relaxTime: 5}}, action) => {
+const pomodoro = (state = {activity: 'work', timeLeft: 10, isOn: false, defaultTime: { workTime: 10, breakTime: 5}}, action) => {
   switch (action.type) {
     case 'PAUSE':
-      if (state.status === 'off') {
-        return Object.assign({}, state, {status: 'on'});
+      if (!state.isOn) {
+        return Object.assign({}, state, {isOn: true});
       }
-      return Object.assign({}, state, {status: 'off'});
+      return Object.assign({}, state, {isOn: false});
+
+    case 'TICK':
+      if (state.timeLeft === 0) {
+        return Object.assign({}, state, {isOn: false, timeLeft: state.defaultTime.workTime});
+      }
+      return Object.assign({}, state, {timeLeft: state.timeLeft - 1});
+
     case 'INCREASE_WORK':
-      return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime +1, relaxTime: state.defaultTime.relaxTime}})
+      return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime +1, breakTime: state.defaultTime.breakTime}})
     case 'DECREASE_WORK':
       if (state.defaultTime.workTime > 0) {
-        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime - 1, relaxTime: state.defaultTime.relaxTime}})
+        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime - 1, breakTime: state.defaultTime.breakTime}})
       }
       return state;
-    case 'INCREASE_RELAX':
-      return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime, relaxTime: state.defaultTime.relaxTime + 1}})
-    case 'DECREASE_RELAX':
-      if (state.defaultTime.relaxTime > 0) {
-        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime, relaxTime: state.defaultTime.relaxTime - 1}})
+    case 'INCREASE_BREAK':
+      return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime, breakTime: state.defaultTime.breakTime + 1}})
+    case 'DECREASE_BREAK':
+      if (state.defaultTime.breakTime > 0) {
+        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime, breakTime: state.defaultTime.breakTime - 1}})
       }
       return state;
 
@@ -60,13 +67,13 @@ const Button = ({
 
 const TimerSettings = ({defaultTime}) => (
   <div>
-    <Button type='INCREASE_WORK' value='+' />
-    <span>Work Time {defaultTime.workTime}</span>
     <Button type='DECREASE_WORK' value='-' />
+    <span>Work Time {defaultTime.workTime}</span>
+    <Button type='INCREASE_WORK' value='+' />
     <p></p>
-    <Button type='INCREASE_RELAX' value='+' />
-    <span>Relax Time {defaultTime.relaxTime}</span>
-    <Button type='DECREASE_RELAX' value='-' />
+    <Button type='DECREASE_BREAK' value='-' />
+    <span>Break Time {defaultTime.breakTime}</span>
+    <Button type='INCREASE_BREAK' value='+' />
   </div>
   );
 
@@ -98,5 +105,20 @@ const render = () => {
   );
 };
 
+var interval = null;
 store.subscribe(render);
+store.subscribe(() => {
+  if (store.getState().isOn && store.getState().timeLeft >= 0 && interval === null) {
+    interval = setInterval(() => {
+      store.dispatch({
+        type: 'TICK',
+      });
+    }, 1000);
+  }
+  if ((!store.getState().isOn) && interval !== null) {
+    clearInterval(interval);
+    interval = null;
+  }
+});
+
 render();
