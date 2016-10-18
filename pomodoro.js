@@ -14,23 +14,33 @@ const pomodoro = (state = {activity: 'work', timeLeft: 10, isOn: false, defaultT
       return Object.assign({}, state, {isOn: false});
 
     case 'TICK':
-      if (state.timeLeft === 0) {
-        return Object.assign({}, state, {isOn: false, timeLeft: state.defaultTime.workTime});
+      if (state.timeLeft === 0 && state.activity === "work") {
+        return Object.assign({}, state, {activity: "break", timeLeft: state.defaultTime.breakTime});
+      }
+      else if (state.timeLeft === 0 && state.activity === "break"){
+        return Object.assign({}, state, {activity: "work", isOn: false, timeLeft: state.defaultTime.workTime});
       }
       return Object.assign({}, state, {timeLeft: state.timeLeft - 1});
 
     case 'INCREASE_WORK':
-      return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime +1, breakTime: state.defaultTime.breakTime}})
+      if (!state.isOn) {
+        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime + 1, breakTime: state.defaultTime.breakTime}}, {timeLeft: state.defaultTime.workTime + 1});
+      }
+      return state;
     case 'DECREASE_WORK':
-      if (state.defaultTime.workTime > 0) {
-        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime - 1, breakTime: state.defaultTime.breakTime}})
+      if (state.defaultTime.workTime > 0 && !state.isOn) {
+        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime - 1, breakTime: state.defaultTime.breakTime}}, {timeLeft: state.defaultTime.workTime - 1});
+        // return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime - 1, breakTime: state.defaultTime.breakTime}});
       }
       return state;
     case 'INCREASE_BREAK':
-      return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime, breakTime: state.defaultTime.breakTime + 1}})
+      if (!state.isOn) {
+        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime, breakTime: state.defaultTime.breakTime + 1}});
+      }
+      return state;
     case 'DECREASE_BREAK':
-      if (state.defaultTime.breakTime > 0) {
-        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime, breakTime: state.defaultTime.breakTime - 1}})
+      if (state.defaultTime.breakTime > 0 && !state.isOn) {
+        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime, breakTime: state.defaultTime.breakTime - 1}});
       }
       return state;
 
