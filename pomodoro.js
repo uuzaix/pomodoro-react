@@ -3,9 +3,7 @@ const ReactDOM = require("react-dom");
 
 const { createStore } = require('redux');
 
-//let defaultTime = {workTime: 10, breakTime: 5};
-
-const pomodoro = (state = {activity: 'work', timeLeft: 10, isOn: false, defaultTime: { workTime: 10, breakTime: 5}}, action) => {
+const pomodoro = (state = {activity: 'Work', timeLeft: 600, isOn: false, defaultTime: { workTime: 10, breakTime: 5}}, action) => {
   switch (action.type) {
     case 'PAUSE':
       if (!state.isOn) {
@@ -14,23 +12,22 @@ const pomodoro = (state = {activity: 'work', timeLeft: 10, isOn: false, defaultT
       return Object.assign({}, state, {isOn: false});
 
     case 'TICK':
-      if (state.timeLeft === 0 && state.activity === "work") {
-        return Object.assign({}, state, {activity: "break", timeLeft: state.defaultTime.breakTime});
+      if (state.timeLeft === 0 && state.activity === "Work") {
+        return Object.assign({}, state, {activity: "Break", timeLeft: state.defaultTime.breakTime*60});
       }
-      else if (state.timeLeft === 0 && state.activity === "break"){
-        return Object.assign({}, state, {activity: "work", isOn: false, timeLeft: state.defaultTime.workTime});
+      else if (state.timeLeft === 0 && state.activity === "Break"){
+        return Object.assign({}, state, {activity: "Work", isOn: false, timeLeft: state.defaultTime.workTime*60});
       }
       return Object.assign({}, state, {timeLeft: state.timeLeft - 1});
 
     case 'INCREASE_WORK':
       if (!state.isOn) {
-        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime + 1, breakTime: state.defaultTime.breakTime}}, {timeLeft: state.defaultTime.workTime + 1});
+        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime + 1, breakTime: state.defaultTime.breakTime}}, {timeLeft: (state.defaultTime.workTime + 1)*60});
       }
       return state;
     case 'DECREASE_WORK':
       if (state.defaultTime.workTime > 0 && !state.isOn) {
-        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime - 1, breakTime: state.defaultTime.breakTime}}, {timeLeft: state.defaultTime.workTime - 1});
-        // return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime - 1, breakTime: state.defaultTime.breakTime}});
+        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime - 1, breakTime: state.defaultTime.breakTime}}, {timeLeft: (state.defaultTime.workTime - 1)*60});
       }
       return state;
     case 'INCREASE_BREAK':
@@ -75,34 +72,46 @@ const Button = ({
   </button>
   )
 
-const TimerSettings = ({defaultTime}) => (
+const TimerSettings = ({workTime, breakTime}) => (
   <div>
     <Button type='DECREASE_WORK' value='-' />
-    <span>Work Time {defaultTime.workTime}</span>
+    <span>Work Time {workTime}</span>
     <Button type='INCREASE_WORK' value='+' />
     <p></p>
     <Button type='DECREASE_BREAK' value='-' />
-    <span>Break Time {defaultTime.breakTime}</span>
+    <span>Break Time {breakTime}</span>
     <Button type='INCREASE_BREAK' value='+' />
   </div>
   );
 
-const TimerDisplay = ({timeLeft}) => (
+const TimerDisplay = ({timeLeft, activity}) => (
   <div
     onClick={()=>{
       store.dispatch({type:'PAUSE'})
     }}>
-    { timeLeft }
+    {activity} { timeLeft }
   </div>
 );
 
 
 const Pomodoro = React.createClass({
+  format(time){
+    const pad = (time) => {
+      while(time.length<2) {
+        time = "0" + time;
+      }
+      return time
+    }
+    let m = pad((Math.floor(time/60)).toString());
+    let s = pad((time % 60).toString());
+    return m + ' : ' + s;
+  },
+
   render: function() {
     return (
       <div>
-        <TimerSettings defaultTime={this.props.defaultTime} />
-        <TimerDisplay timeLeft={this.props.timeLeft} />
+        <TimerSettings workTime={this.props.defaultTime.workTime} breakTime={this.props.defaultTime.breakTime}/>
+        <TimerDisplay timeLeft={this.format(this.props.timeLeft)} activity={this.props.activity}/>
       </div>
     );
   }
