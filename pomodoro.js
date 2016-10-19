@@ -22,21 +22,33 @@ const pomodoro = (state = {activity: 'Work', timeLeft: 600, isOn: false, default
 
     case 'INCREASE_WORK':
       if (!state.isOn) {
-        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime + 1, breakTime: state.defaultTime.breakTime}}, {timeLeft: (state.defaultTime.workTime + 1)*60});
+        if (state.activity === 'Work') {
+          return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime + 1, breakTime: state.defaultTime.breakTime}}, {timeLeft: (state.defaultTime.workTime + 1)*60});
+        }
+        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime + 1, breakTime: state.defaultTime.breakTime}});
       }
       return state;
     case 'DECREASE_WORK':
       if (state.defaultTime.workTime > 0 && !state.isOn) {
-        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime - 1, breakTime: state.defaultTime.breakTime}}, {timeLeft: (state.defaultTime.workTime - 1)*60});
+        if (state.activity === 'Work') {
+          return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime - 1, breakTime: state.defaultTime.breakTime}}, {timeLeft: (state.defaultTime.workTime - 1)*60});
+        }
+        return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime - 1, breakTime: state.defaultTime.breakTime}});
       }
       return state;
     case 'INCREASE_BREAK':
       if (!state.isOn) {
+        if (state.activity === 'Break') {
+          return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime, breakTime: state.defaultTime.breakTime + 1}}, {timeLeft: (state.defaultTime.breakTime + 1)*60});
+        }
         return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime, breakTime: state.defaultTime.breakTime + 1}});
       }
       return state;
     case 'DECREASE_BREAK':
       if (state.defaultTime.breakTime > 0 && !state.isOn) {
+        if (state.activity === 'Break') {
+          return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime, breakTime: state.defaultTime.breakTime - 1}}, {timeLeft: (state.defaultTime.breakTime - 1)*60});
+        }
         return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime, breakTime: state.defaultTime.breakTime - 1}});
       }
       return state;
