@@ -3,7 +3,8 @@ const ReactDOM = require("react-dom");
 
 const { createStore } = require('redux');
 
-const pomodoro = (state = {activity: 'Work', timeLeft: 600, isOn: false, defaultTime: { workTime: 10, breakTime: 5}}, action) => {
+const defaultState = {activity: 'Work', timeLeft: 600, isOn: false, defaultTime: { workTime: 10, breakTime: 5}};
+const pomodoro = (state = defaultState, action) => {
   switch (action.type) {
     case 'PAUSE':
       if (!state.isOn) {
@@ -16,7 +17,7 @@ const pomodoro = (state = {activity: 'Work', timeLeft: 600, isOn: false, default
         return Object.assign({}, state, {activity: "Break", timeLeft: state.defaultTime.breakTime*60});
       }
       else if (state.timeLeft === 0 && state.activity === "Break"){
-        return Object.assign({}, state, {activity: "Work", isOn: false, timeLeft: state.defaultTime.workTime*60});
+        return Object.assign({}, state, {activity: "Work", timeLeft: state.defaultTime.workTime*60});
       }
       return Object.assign({}, state, {timeLeft: state.timeLeft - 1});
 
@@ -52,6 +53,8 @@ const pomodoro = (state = {activity: 'Work', timeLeft: 600, isOn: false, default
         return Object.assign({}, state, {defaultTime: {workTime: state.defaultTime.workTime, breakTime: state.defaultTime.breakTime - 1}});
       }
       return state;
+    case 'RESET':
+      return Object.assign({}, state, {isOn: false, activity: "Work", timeLeft: state.defaultTime.workTime*60});
 
     default:
       return state;
@@ -122,8 +125,9 @@ const Pomodoro = React.createClass({
   render: function() {
     return (
       <div>
-        <TimerSettings workTime={this.props.defaultTime.workTime} breakTime={this.props.defaultTime.breakTime}/>
-        <TimerDisplay timeLeft={this.format(this.props.timeLeft)} activity={this.props.activity}/>
+        <TimerSettings workTime={this.props.defaultTime.workTime} breakTime={this.props.defaultTime.breakTime} />
+        <TimerDisplay timeLeft={this.format(this.props.timeLeft)} activity={this.props.activity} />
+        <Button type='RESET' value='Reset' />
       </div>
     );
   }
@@ -146,7 +150,7 @@ store.subscribe(() => {
       });
     }, 1000);
   }
-  if ((!store.getState().isOn) && interval !== null) {
+  if (!store.getState().isOn && interval !== null) {
     clearInterval(interval);
     interval = null;
   }
