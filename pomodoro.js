@@ -75,9 +75,10 @@ const store = createStore(pomodoro, window.__REDUX_DEVTOOLS_EXTENSION__ && windo
 
 const Button = ({
   type,
-  value
+  value,
+  className
 }) => (
-  <button 
+  <button className={className}
     onClick={()=> {
       store.dispatch({
         type:type,
@@ -88,23 +89,30 @@ const Button = ({
   )
 
 const TimerSettings = ({workTime, breakTime}) => (
-  <div>
-    <Button type='DECREASE_WORK' value='-' />
-    <span>Work Time {workTime}</span>
-    <Button type='INCREASE_WORK' value='+' />
-    <p></p>
-    <Button type='DECREASE_BREAK' value='-' />
-    <span>Break Time {breakTime}</span>
-    <Button type='INCREASE_BREAK' value='+' />
+  <div className='settings'>
+    <div className='settings-work'>
+      <p>Work</p>
+      <Button className='settings-btn' type='DECREASE_WORK' value='-' />
+      <span className='text'>{workTime} min</span>
+      <Button className='settings-btn' type='INCREASE_WORK' value='+' />
+    </div>
+    <div className='settings-break'>
+      <p>Break</p>
+      <Button className='settings-btn' type='DECREASE_BREAK' value='-' />
+      <span className='text'>{breakTime} min</span>
+      <Button className='settings-btn' type='INCREASE_BREAK' value='+' />
+    </div>
   </div>
   );
 
 const TimerDisplay = ({timeLeft, activity}) => (
-  <div
+  <div className='timerDisplay'>
+  <p
     onClick={()=>{
       store.dispatch({type:'PAUSE'})
     }}>
-    {activity} { timeLeft }
+    {activity} <br /> { timeLeft }
+    </p>
   </div>
 );
 
@@ -125,9 +133,10 @@ const Pomodoro = React.createClass({
   render: function() {
     return (
       <div>
+        <p className='title'>POMODORO</p>
         <TimerSettings workTime={this.props.defaultTime.workTime} breakTime={this.props.defaultTime.breakTime} />
         <TimerDisplay timeLeft={this.format(this.props.timeLeft)} activity={this.props.activity} />
-        <Button type='RESET' value='Reset' />
+        <Button className='reset-btn' type='RESET' value='RESET' />
       </div>
     );
   }
