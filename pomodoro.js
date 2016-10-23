@@ -133,7 +133,7 @@ const Pomodoro = React.createClass({
   render: function() {
     return (
       <div>
-        <p className='title'>POMODORO</p>
+        <p className='title'>POMODORO Timer</p>
         <TimerSettings workTime={this.props.defaultTime.workTime} breakTime={this.props.defaultTime.breakTime} />
         <TimerDisplay timeLeft={this.format(this.props.timeLeft)} activity={this.props.activity} />
         <Button className='reset-btn' type='RESET' value='RESET' />
@@ -162,6 +162,10 @@ store.subscribe(() => {
   if (!store.getState().isOn && interval !== null) {
     clearInterval(interval);
     interval = null;
+  }
+  if (store.getState().isOn && store.getState().activity === 'Work' && store.getState().timeLeft === 0) {
+    var audio = new Audio('http://www.mp3item.com/soundeffects/clock04.wav');
+    audio.play();
   }
 });
 

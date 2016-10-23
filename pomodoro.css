@@ -1,60 +1,68 @@
 html, body {
   height: 100%;
   width: 100%;
-  background-color: #DECEC7;
+  background-color: #FFD394;
   font-size: 24px;
-  font-family: "Segoe UI", Segoe, Tahoma, Geneva, sans-serif;
+  font-family: 'Lato', sans-serif;
   overflow: hidden;
 }
 
 #root {
   text-align: center;
-}
-
-
-.wrapper {
+  margin-top: 90px;
 }
 
 .title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 42px;
+  margin: 60px 0;
+  color: #4d2800;
 }
 
 .timerDisplay {
+  width: 250px;
+  height: 250px;
+  padding: 60px;
+  margin: 5px auto;
+  font-size: 40px;
+  line-height: 70px;
   border-radius: 50%;
-  width: 6em;
-  height: 6em;
-  /*border: 2px solid #8b0000;*/
-  padding: 2em;
-  margin: 20px auto;
   text-align: center;
-  background-color: #cc0000;
-  color: white;
-  cursor: pointer;
-  line-height: 50px;
+  background-color:  #FF3A3A;
   box-shadow: 6px 9px 30px 0 rgba(0, 0, 0, 0.68), inset -2px -5px 15px 0 #584c46;
+  cursor: pointer;
+  color: #fff;
 }
 
 .settings {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  color: #fff;
 }
 
 .settings-break, .settings-work {
-  margin: 10px;
+  margin: 0 20px;
+  border-radius: 80% 5%;
+  background-color: #6b8e23;
+  padding: 30px;
 }
 
-.settings-break p {
-  margin: 0;
+.settings-work {
+  border-radius: 5% 80%;
 }
 
-.settings-work p {
+.settings-break p, .settings-work p  {
   margin: 0;
+  font-size: 18px;
+  text-transform: uppercase;
 }
 
 .settings-btn {
+  color: #fff;
   margin: 8px;
   font-size: 24px;
-  background:  #DECEC7;
+  background-color: #6b8e23;
   border-style: none;
   cursor: pointer;
 }
@@ -63,14 +71,17 @@ html, body {
 }
 
 .reset-btn {
-  background-color: green;
-  color: white;
+  background-color: #6b8e23;
+  color: #fff;
   font-size: 16px;
   padding: 9px;
   border-radius: 10%;
   border-style: none;
   cursor: pointer;
+  font-family: 'Lato', sans-serif;
+  margin: 40px;
 }
+
 .reset-btn:focus, .reset-btn:active {
   outline: none; 
 }
