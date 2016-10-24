@@ -106,7 +106,7 @@ const TimerSettings = ({workTime, breakTime}) => (
   );
 
 const TimerDisplay = ({timeLeft, activity}) => (
-  <div className='timerDisplay'>
+  <div className='timerDisplay' style={{background:'linear-gradient(#FF3A3A 80%,#426e1f 20%)'}}>
   <p
     onClick={()=>{
       store.dispatch({type:'PAUSE'})
