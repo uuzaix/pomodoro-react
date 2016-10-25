@@ -113,13 +113,11 @@ const TimerDisplay = ({timeLeft, activity, style}) => {
   // };
 
   return (
-    <div className='timerDisplay' style={ style }>
-    <p
+    <div className='timerDisplay' style={ style }
       onClick={()=>{
         store.dispatch({type:'PAUSE'})
       }}>
       { activity } <br /> { timeLeft }
-      </p>
     </div>
   );
 };
@@ -140,7 +138,7 @@ const Pomodoro = React.createClass({
 
   createStyle(timeLeft, activity, workTime, breakTime) {
     const initialTime = (activity === "Work") ? workTime*60 : breakTime*60;
-    const readyFraction = (Math.round(timeLeft/initialTime))*100;
+    const readyFraction = ((timeLeft/initialTime)*100).toFixed(2);
     const style = {
       background: 'linear-gradient(#FF3A3A ' + readyFraction + '%,#f98200 0%)'
     };
