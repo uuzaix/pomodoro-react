@@ -105,20 +105,28 @@ const TimerSettings = ({workTime, breakTime}) => (
   </div>
   );
 
-const TimerDisplay = ({timeLeft, activity}) => (
-  <div className='timerDisplay' style={{background:'linear-gradient(#FF3A3A 80%,#426e1f 20%)'}}>
-  <p
-    onClick={()=>{
-      store.dispatch({type:'PAUSE'})
-    }}>
-    {activity} <br /> { timeLeft }
-    </p>
-  </div>
-);
+const TimerDisplay = ({timeLeft, activity, style}) => {
+  // const initialTime = (activity === "Work") ? workTime*60 : breakTime*60;
+  // const readyFraction = (Math.round(time/initialTime))*100;
+  // const style = {
+  //   background: 'linear-gradient(#FF3A3A ' + readyFraction + '%,#f98200 0%)'
+  // };
+
+  return (
+    <div className='timerDisplay' style={ style }>
+    <p
+      onClick={()=>{
+        store.dispatch({type:'PAUSE'})
+      }}>
+      { activity } <br /> { timeLeft }
+      </p>
+    </div>
+  );
+};
 
 
 const Pomodoro = React.createClass({
-  format(time){
+  format(time) {
     const pad = (time) => {
       while(time.length<2) {
         time = "0" + time;
@@ -130,12 +138,22 @@ const Pomodoro = React.createClass({
     return m + ' : ' + s;
   },
 
+  createStyle(timeLeft, activity, workTime, breakTime) {
+    const initialTime = (activity === "Work") ? workTime*60 : breakTime*60;
+    const readyFraction = (Math.round(timeLeft/initialTime))*100;
+    const style = {
+      background: 'linear-gradient(#FF3A3A ' + readyFraction + '%,#f98200 0%)'
+    };
+    return style;
+  },
+
   render: function() {
     return (
       <div>
         <p className='title'>POMODORO Timer</p>
         <TimerSettings workTime={this.props.defaultTime.workTime} breakTime={this.props.defaultTime.breakTime} />
-        <TimerDisplay timeLeft={this.format(this.props.timeLeft)} activity={this.props.activity} />
+        <TimerDisplay timeLeft={this.format(this.props.timeLeft)} activity={this.props.activity} 
+          style={this.createStyle(this.props.timeLeft, this.props.activity, this.props.defaultTime.workTime, this.props.defaultTime.breakTime)} />
         <Button className='reset-btn' type='RESET' value='RESET' />
       </div>
     );
