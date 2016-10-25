@@ -3,7 +3,8 @@ const ReactDOM = require("react-dom");
 
 const { createStore } = require('redux');
 
-const defaultState = {activity: 'Work', timeLeft: 600, isOn: false, defaultTime: { workTime: 10, breakTime: 5}};
+const defaultState = {activity: 'Work', timeLeft: 1500, isOn: false, defaultTime: { workTime: 25, breakTime: 5}};
+
 const pomodoro = (state = defaultState, action) => {
   switch (action.type) {
     case 'PAUSE':
@@ -117,7 +118,7 @@ const TimerDisplay = ({timeLeft, activity, style}) => {
       onClick={()=>{
         store.dispatch({type:'PAUSE'})
       }}>
-      { activity } <br /> { timeLeft }
+      <p> { activity } <br /> { timeLeft } </p>
     </div>
   );
 };
@@ -136,11 +137,14 @@ const Pomodoro = React.createClass({
     return m + ' : ' + s;
   },
 
-  createStyle(timeLeft, activity, workTime, breakTime) {
-    const initialTime = (activity === "Work") ? workTime*60 : breakTime*60;
+  setStyle(timeLeft, activity, workTime, breakTime) {
+    var initialTime = workTime*60, mainColor = '#FF3A3A', secondColor = '#f98200';
+    if (activity === "Break") {
+      initialTime = breakTime*60, mainColor = '#f98200', secondColor = '#FF3A3A';
+    }
     const readyFraction = ((timeLeft/initialTime)*100).toFixed(2);
     const style = {
-      background: 'linear-gradient(#FF3A3A ' + readyFraction + '%,#f98200 0%)'
+      background: 'linear-gradient(' + mainColor +' ' + readyFraction + '%, ' + secondColor + ' 0%)'
     };
     return style;
   },
@@ -151,7 +155,7 @@ const Pomodoro = React.createClass({
         <p className='title'>POMODORO Timer</p>
         <TimerSettings workTime={this.props.defaultTime.workTime} breakTime={this.props.defaultTime.breakTime} />
         <TimerDisplay timeLeft={this.format(this.props.timeLeft)} activity={this.props.activity} 
-          style={this.createStyle(this.props.timeLeft, this.props.activity, this.props.defaultTime.workTime, this.props.defaultTime.breakTime)} />
+          style={this.setStyle(this.props.timeLeft, this.props.activity, this.props.defaultTime.workTime, this.props.defaultTime.breakTime)} />
         <Button className='reset-btn' type='RESET' value='RESET' />
       </div>
     );
