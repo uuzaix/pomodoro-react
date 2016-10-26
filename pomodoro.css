@@ -18,12 +18,12 @@ html, body {
   margin: 0;
   color: #4d2800;
   padding: 40px;
+  font-weight: bold;
 }
 
 .timerDisplay {
-  width: 250px;
-  height: 250px;
-  padding: 60px;
+  width: 300px;
+  height: 300px;
   margin: 5px auto;
   font-size: 40px;
   line-height: 70px;
@@ -33,6 +33,10 @@ html, body {
   box-shadow: 6px 9px 30px 0 rgba(0, 0, 0, 0.68), inset -2px -5px 15px 0 #584c46;
   cursor: pointer;
   color: #fff;
+}
+.timerDisplay p {
+  padding: 80px;
+  margin: 0;
 }
 
 .settings {
